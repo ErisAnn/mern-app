@@ -103,7 +103,7 @@ app.get("/auth/twitch/callback", passport.authenticate("twitch", { failureRedire
 // Routes
 app.use("/api/users", userRoute); // routing - how app responds to client request (URI & HTTP request method)
 
-const PORT = process.env.PORT || 3000; // use .env port or 3000
+const PORT = process.env.PORT || 5000; // use .env port or 5000
 app.listen(PORT, () => {
   console.log(`Server is running at port ${process.env.PORT}.`);
 });
