@@ -13,7 +13,7 @@ module.exports = passport => {
       {
         clientID: process.env.DISCORD_CLIENT_ID,
         clientSecret: process.env.DISCORD_CLIENT_SECRET,
-        callbackURL: "https://localhost:3000/auth/discord/callback",
+        callbackURL: "${process.env.SELF}:${process.env.PORT}/auth/discord/callback",
         scope: scopes
       },
       (accessToken, refreshToken, profile, cb) => {

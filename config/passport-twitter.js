@@ -10,7 +10,7 @@ module.exports = passport => {
     {
       consumerKey: process.env.TWITTER_CONSUMER_KEY,
       consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-      callbackURL: "https://localhost:3000/auth/twitter/callback"
+      callbackURL: "${process.env.SELF}:${process.env.PORT}/auth/twitter/callback"
     },
     (token, tokenSecret, profile, done) => {
       User.findOrCreate({ twitterId: profile.id }, (err, user) => {

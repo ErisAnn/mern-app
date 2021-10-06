@@ -11,7 +11,7 @@ module.exports = passport => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "https://localhost:3000/auth/google/callback"
+        callbackURL: "${process.env.SELF}:${process.env.PORT}/auth/google/callback"
       },
       (accessToken, refreshToken, profile, done) => {
         User.findOrCreate({ googleId: profile.id }, (err, user) => {return done(err, user);

@@ -11,7 +11,7 @@ module.exports = passport => {
       {
         clientID: process.env.TWITCH_CLIENT_ID,
         clientSecret: process.env.TWITCH_CLIENT_SECRET,
-        callbackURL: "https://localhost:3000/auth/twitch/callback",
+        callbackURL: "${process.env.SELF}:${process.env.PORT}/auth/twitch/callback",
         scope: "user_read"
       },
       (accessToken, refreshToken, profile, done) => {

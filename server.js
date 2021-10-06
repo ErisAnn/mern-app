@@ -66,9 +66,9 @@ app.get('/auth/google',
 //   which, in this example, will redirect the user to the home page.
 
 app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { failureRedirect: '/' }),
   function(req, res) {
-    res.redirect('/');
+    res.redirect('/dashboard');
   });
 
 // Redirect the user to Twitter for authentication.  When complete, Twitter
@@ -81,22 +81,22 @@ app.get('/auth/twitter', passport.authenticate('twitter'));
 // access was granted, the user will be logged in.  Otherwise,
 // authentication has failed.
 app.get('/auth/twitter/callback',
-  passport.authenticate('twitter', { successRedirect: '/',
-                                     failureRedirect: '/login' }));
+  passport.authenticate('twitter', { successRedirect: '/dashboard',
+                                     failureRedirect: '/' }));
 
 // Discord
 app.get('/auth/discord', passport.authenticate('discord'));
 app.get('/auth/discord/callback', passport.authenticate('discord', {
     failureRedirect: '/'
 }), (req, res) => {
-    res.redirect('/') // Successful auth
+    res.redirect('/dashboard') // Successful auth
 });
 
 //Twitch
 app.get("/auth/twitch", passport.authenticate("twitch"));
 app.get("/auth/twitch/callback", passport.authenticate("twitch", { failureRedirect: "/" }), function(req, res) {
     // Successful authentication, redirect home.
-    res.redirect("/");
+    res.redirect("/dashboard");
 });
 
 

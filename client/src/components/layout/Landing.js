@@ -45,54 +45,6 @@ class Landing extends Component {
             </div>
           </div>
         </div>
-        <div className="row">
-          <div className="col s12 center-align">
-            <Link
-              to="/auth/google"
-              style={{
-                width: "300px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px"
-              }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-            >
-              Sign In with Google
-            </Link>
-            <Link
-              to="/auth/twitter"
-              style={{
-                width: "300px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px"
-              }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-            >
-              Sign In with Twitter
-            </Link>
-            <Link
-              to="/auth/discord"
-              style={{
-                width: "300px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px"
-              }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-            >
-              Sign In with Discord
-            </Link>
-            <Link
-              to="/auth/twitch"
-              style={{
-                width: "300px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px"
-              }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-            >
-              Sign In with Twitch
-            </Link>
-          </div>
-        </div>
       </div>
     );
   }
