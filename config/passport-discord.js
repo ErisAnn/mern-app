@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const passport = require('passport');
-const DiscordStrategy = require('passport-discord').Strategy
+const DiscordStrategy = require('passport-discord').Strategy;
 const mongoose = require("mongoose");
 const User = mongoose.model("users");
 
@@ -13,14 +13,24 @@ module.exports = passport => {
       {
         clientID: process.env.DISCORD_CLIENT_ID,
         clientSecret: process.env.DISCORD_CLIENT_SECRET,
-        callbackURL: "${process.env.SELF}:${process.env.PORT}/auth/discord/callback",
+        callbackURL: `${process.env.SELF}:${process.env.PORT}/auth/discord/callback`,
         scope: scopes
       },
       (accessToken, refreshToken, profile, cb) => {
-        User.findOrCreate({ discordId: profile.id }, (err, user) => {return cb(err, user);
+        User.findOne({ discordId: profile.id }, (err, user) => {
+          if (!user) {
+            user = new User({
+              discordId: profile.id
+            });
+            user.save(function(err) {
+              if (err) console.log(err);
+              return cb(err, user);
+            });
+          } else {
+              return cb(err, user);
+          }
         });
       }
     )
   );
 };
-

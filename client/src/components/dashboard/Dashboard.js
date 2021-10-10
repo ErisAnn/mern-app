@@ -2,12 +2,31 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
+const isEmpty = require("is-empty");
 
 class Dashboard extends Component {
+  
+
+  componentDidMount() {
+    // If logged in and no username navigates to Dashboard page, should redirect them to Name themselves
+    if (isEmpty(this.props.auth.name)) {
+      this.props.history.push("/addusername");
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
+      });
+    }
+  }
+     
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();
   };
+
 
   render() {
     const { user } = this.props.auth;
@@ -16,6 +35,7 @@ class Dashboard extends Component {
       <div style={{ height: "75vh" }} className="container valign-wrapper">
         <div className="row">
           <div className="landing-copy col s12 center-align">
+
             <h4>
               <b>Hey there,</b> {user.name.split(" ")[0]}
               <p className="flow-text grey-text text-darken-1">
@@ -23,6 +43,7 @@ class Dashboard extends Component {
                 <span style={{ fontFamily: "monospace" }}>MERN</span> app 👏
               </p>
             </h4>
+
             <button
               style={{
                 width: "150px",

@@ -28,15 +28,12 @@ app.use(cookieParser());
 // Passport middleware
 app.use(session({
   secret: "secret",
-  //name: "cookie_name",
+  name: "cookie_name",
   //store: sessionStore, mongo session store
-  //proxy: true,
+  proxy: true,
   resave: true,
   saveUninitialized: true
 }));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Passport config
 require("./config/passport")(passport);
@@ -45,9 +42,20 @@ require('./config/passport-twitter')(passport);
 require('./config/passport-discord')(passport);
 require('./config/passport-twitch')(passport);
 
-// Homepage route
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+    done(null, user);
+});
+
+// Server homepage route
 app.get("/", (req, res) => {
-  res.send('Hi!'); // res.json({ message: 'Welcome to the site!!' });
+  res.send('Hi!'); // res.json({ message: 'hi!!' });
 });
 
 // GET /auth/google
@@ -67,8 +75,8 @@ app.get('/auth/google',
 
 app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/' }),
-  function(req, res) {
-    res.redirect('/dashboard');
+  function(req, res) { console.log('testing!');
+    res.redirect('http://localhost:3000/dashboard');
   });
 
 // Redirect the user to Twitter for authentication.  When complete, Twitter
@@ -80,25 +88,26 @@ app.get('/auth/twitter', passport.authenticate('twitter'));
 // authentication process by attempting to obtain an access token.  If
 // access was granted, the user will be logged in.  Otherwise,
 // authentication has failed.
-app.get('/auth/twitter/callback',
-  passport.authenticate('twitter', { successRedirect: '/dashboard',
-                                     failureRedirect: '/' }));
+app.get('/auth/twitter/callback', passport.authenticate('twitter', { 
+    successRedirect: 'http://localhost:3000/dashboard',
+    failureRedirect: '/' }));
 
 // Discord
 app.get('/auth/discord', passport.authenticate('discord'));
 app.get('/auth/discord/callback', passport.authenticate('discord', {
     failureRedirect: '/'
 }), (req, res) => {
-    res.redirect('/dashboard') // Successful auth
+    res.redirect('http://localhost:3000/dashboard') // Successful auth
 });
 
 //Twitch
-app.get("/auth/twitch", passport.authenticate("twitch"));
-app.get("/auth/twitch/callback", passport.authenticate("twitch", { failureRedirect: "/" }), function(req, res) {
+app.get("/auth/twitch", passport.authenticate('twitch'));
+app.get("/auth/twitch/callback", passport.authenticate('twitch', {
+    failureRedirect: '/'
+}), (req, res) => {
     // Successful authentication, redirect home.
-    res.redirect("/dashboard");
+    res.redirect("http://localhost:3000/dashboard")
 });
-
 
 // Routes
 app.use("/api/users", userRoute); // routing - how app responds to client request (URI & HTTP request method)

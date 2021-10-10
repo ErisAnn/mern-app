@@ -25,13 +25,15 @@ router.post("/register", (req, res) => {
     return res.status(400).json(errors);
   }
 
-  User.findOne({ email: req.body.email }).then(user => {
+  nocaps = req.body.email.toLowerCase();
+
+  User.findOne({ email: nocaps }).then(user => {
     if (user) {
       return res.status(400).json({ email: "Email already exists" });
     } else {
       const newUser = new User({
         name: req.body.name,
-        email: req.body.email,
+        email: nocaps,
         password: req.body.password
       });
 
@@ -63,7 +65,7 @@ router.post("/login", (req, res) => {
     return res.status(400).json(errors);
   }
 
-  const email = req.body.email;
+  const email = req.body.email.toLowerCase();
   const password = req.body.password;
 
   // Find user by email
@@ -105,5 +107,50 @@ router.post("/login", (req, res) => {
     });
   });
 });
+
+// @route POST api/users/addusername
+// @desc Login user and return JWT token
+// @access Public
+router.post("/addusername", (req, res) => {
+  // Form validation
+
+  const { errors, isValid } = validateUsernameInput(req.body);
+
+  // Check validation
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+  const username = req.body.name.toLowerCase();
+ 
+  // Find user by email
+  User.findOne({ name }).then(user => {
+    // Check if user exists
+    if (user) {
+      return res.status(404).json({ usernamefound: "Username already exists" });
+    }
+
+
+
+        // Sign token
+        jwt.sign(
+          payload,
+          keys.secretOrKey,
+          {
+            expiresIn: 31556926 // 1 year in seconds
+          },
+          (err, token) => {
+            res.json({
+              success: true,
+              token: "Bearer " + token
+            });
+          }
+        );
+
+
+  });
+});
+
+
 
 module.exports = router;

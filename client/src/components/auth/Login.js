@@ -45,9 +45,12 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password
     };
-
+    const addUsername = {
+      name: this.state.name,
+    };
     this.props.loginUser(userData);
   };
+
 
   render() {
     const { errors } = this.state;
@@ -121,52 +124,55 @@ class Login extends Component {
                 <div className="row">
           <div className="col s12 center-align">
             <Link
-              to="/auth/google"
-              style={{
+              to={{ pathname: "http://localhost:5000/auth/google" }}
+                style={{
                 width: "300px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px"
               }}
+              target="_top"
               className="btn btn-large waves-effect waves-light hoverable blue accent-3"
             >
               Sign In with Google
             </Link>
             <Link
-              to="/auth/twitter"
+              to={{ pathname: "http://localhost:5000/auth/twitter" }}
               style={{
                 width: "300px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px"
               }}
+              target="_top"
               className="btn btn-large waves-effect waves-light hoverable blue accent-3"
             >
               Sign In with Twitter
             </Link>
             <Link
-              to="/auth/discord"
+              to={{ pathname: "http://localhost:5000/auth/discord" }}
               style={{
                 width: "300px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px"
               }}
+              target="_top"
               className="btn btn-large waves-effect waves-light hoverable blue accent-3"
             >
               Sign In with Discord
             </Link>
             <Link
-              to="/auth/twitch"
+              to={{ pathname: "http://localhost:5000/auth/twitch" }}
               style={{
                 width: "300px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px"
               }}
+              target="_top"
               className="btn btn-large waves-effect waves-light hoverable blue accent-3"
             >
               Sign In with Twitch
             </Link>
           </div>
         </div>
-
 
               </div>
             </form>
