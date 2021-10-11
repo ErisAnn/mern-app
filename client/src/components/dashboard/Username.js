@@ -6,14 +6,14 @@ const isEmpty = require("is-empty");
 
 class Username extends Component {
   
-
+/*
   componentDidMount() {
     // If username exists, should redirect them to dashboard
     if (!isEmpty(this.props.auth.name)) {
       this.props.history.push("/dashboard");
     }
   }
-
+*/
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
       this.setState({

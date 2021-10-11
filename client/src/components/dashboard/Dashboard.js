@@ -6,14 +6,14 @@ const isEmpty = require("is-empty");
 
 class Dashboard extends Component {
   
-
+/*
   componentDidMount() {
     // If logged in and no username navigates to Dashboard page, should redirect them to Name themselves
     if (isEmpty(this.props.auth.name)) {
       this.props.history.push("/addusername");
     }
   }
-
+*/
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
       this.setState({

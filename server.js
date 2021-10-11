@@ -6,8 +6,10 @@ const passport = require("passport");
 const userRoute = require("./routes/api/users");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const cookieSession = require("cookie-session");
 
 const connectToDB = require('./app/dbConnection.js');
+const User = require('./models/User');
 const app = express(); // create new express app
 
 // Middleware
@@ -42,15 +44,21 @@ require('./config/passport-twitter')(passport);
 require('./config/passport-discord')(passport);
 require('./config/passport-twitch')(passport);
 
+app.use(cookieSession({
+  maxAge: 24*60*60*1000,
+  keys:[process.env.COOKIE_KEY]
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser(function(user, done) {
-  done(null, user);
+passport.serializeUser((user, done) => {
+  done(null, user.id); //added .id?
 });
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser((id, done) => {
+  User.findById(id).then(user => {
     done(null, user);
+  });  
 });
 
 // Server homepage route
@@ -75,7 +83,9 @@ app.get('/auth/google',
 
 app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/' }),
-  function(req, res) { console.log('testing!');
+  function(req, res) { 
+    res.send(req.user);
+    console.log('did it work?');
     res.redirect('http://localhost:3000/dashboard');
   });
 
@@ -107,6 +117,11 @@ app.get("/auth/twitch/callback", passport.authenticate('twitch', {
 }), (req, res) => {
     // Successful authentication, redirect home.
     res.redirect("http://localhost:3000/dashboard")
+});
+
+app.get("/auth/logout", (req, res) => {
+  req.logout();
+  res.send(req.user);
 });
 
 // Routes
