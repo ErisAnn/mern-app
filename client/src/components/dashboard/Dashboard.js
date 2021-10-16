@@ -6,14 +6,14 @@ const isEmpty = require("is-empty");
 
 class Dashboard extends Component {
   
-/*
+
   componentDidMount() {
     // If logged in and no username navigates to Dashboard page, should redirect them to Name themselves
-    if (isEmpty(this.props.auth.name)) {
+    if (isEmpty(this.props.auth.user.name)) {
       this.props.history.push("/addusername");
     }
   }
-*/
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
       this.setState({
@@ -21,7 +21,8 @@ class Dashboard extends Component {
       });
     }
   }
-     
+
+  
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();
@@ -29,7 +30,7 @@ class Dashboard extends Component {
 
 
   render() {
-    const { user } = this.props.auth;
+    const { user } = this.props.auth; //name = this.props.auth.user.name;
 
     return (
       <div style={{ height: "75vh" }} className="container valign-wrapper">
@@ -37,7 +38,7 @@ class Dashboard extends Component {
           <div className="landing-copy col s12 center-align">
 
             <h4>
-              <b>Hey there,</b> {user.name.split(" ")[0]}
+              <b>Hey there, </b> { user.name.split(" ")[0] /*name*/ }
               <p className="flow-text grey-text text-darken-1">
                 You are logged into a full-stack{" "}
                 <span style={{ fontFamily: "monospace" }}>MERN</span> app 👏

@@ -5,12 +5,26 @@ const cors = require("cors"); // req cors.js
 const passport = require("passport");
 const userRoute = require("./routes/api/users");
 const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const cookieSession = require("cookie-session");
+//const session = require("express-session");
+const jwt = require("jsonwebtoken");
+const keys = require("./config/keys");
 
 const connectToDB = require('./app/dbConnection.js');
 const User = require('./models/User');
 const app = express(); // create new express app
+
+/* TESTING
+authRoute = require("./routes/authRoute"),
+postRoute = require("./routes/postRoute"),
+auth = require('./middleware/auth.js')(),
+localStrategy = require("passport-local"),
+app.use(auth.initialize());
+// Passport Config
+app.use(authRoute);
+app.use(postRoute);
+//
+//
+// END TESTING */
 
 // Middleware
 app.use(cors({
@@ -28,14 +42,17 @@ app.use(express.urlencoded({ extended: true })); // recognize and parse request 
 app.use(cookieParser());
 
 // Passport middleware
+
+/* Am I even using this?
 app.use(session({
   secret: "secret",
   name: "cookie_name",
-  //store: sessionStore, mongo session store
+  //store: sessionStore,
   proxy: true,
   resave: true,
   saveUninitialized: true
 }));
+*/
 
 // Passport config
 require("./config/passport")(passport);
@@ -44,21 +61,20 @@ require('./config/passport-twitter')(passport);
 require('./config/passport-discord')(passport);
 require('./config/passport-twitch')(passport);
 
-app.use(cookieSession({
-  maxAge: 24*60*60*1000,
-  keys:[process.env.COOKIE_KEY]
-}));
 app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.session());
 
 passport.serializeUser((user, done) => {
-  done(null, user.id); //added .id?
+  done(null, user);
 });
-
 passport.deserializeUser((id, done) => {
-  User.findById(id).then(user => {
-    done(null, user);
-  });  
+  User.findById(id)
+    .then(user => {
+      done(null, user);
+    })
+    .catch(e => {
+      done(new Error("Failed to deserialize an user"));
+    });
 });
 
 // Server homepage route
@@ -66,62 +82,51 @@ app.get("/", (req, res) => {
   res.send('Hi!'); // res.json({ message: 'hi!!' });
 });
 
-// GET /auth/google
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in Google authentication will involve
-//   redirecting the user to google.com.  After authorization, Google
-//   will redirect the user back to this application at /auth/google/callback
-
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
-
-// GET /auth/google/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function function will be called,
-//   which, in this example, will redirect the user to the home page.
-
+// Google
+app.get('/auth/google', passport.authenticate('google', {session: false, scope: ['https://www.googleapis.com/auth/plus.login']}));
 app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/' }),
-  function(req, res) { 
-    res.send(req.user);
-    console.log('did it work?');
-    res.redirect('http://localhost:3000/dashboard');
+  passport.authenticate('google', {session: false, failureRedirect: '/'}),
+  (req, res) => { 
+
+    console.log('redirected', req.user)
+    let user = {
+        googleId: req.user.googleId
+    }
+    console.log(user)
+
+    let token = jwt.sign({
+        data: user
+        }, 'secret', { expiresIn: 31556926 }
+    );
+    res.cookie('jwt', token)
+    res.redirect('http://localhost:3000/cookietosession');
+
   });
 
-// Redirect the user to Twitter for authentication.  When complete, Twitter
-// will redirect the user back to the application at
-//   /auth/twitter/callback
-app.get('/auth/twitter', passport.authenticate('twitter'));
-
-// Twitter will redirect the user to this URL after approval.  Finish the
-// authentication process by attempting to obtain an access token.  If
-// access was granted, the user will be logged in.  Otherwise,
-// authentication has failed.
-app.get('/auth/twitter/callback', passport.authenticate('twitter', { 
+// Twitter
+app.get('/auth/twitter', passport.authenticate('twitter', {session: false}));
+app.get('/auth/twitter/callback',
+  passport.authenticate('twitter', { 
+    session: false,
     successRedirect: 'http://localhost:3000/dashboard',
     failureRedirect: '/' }));
 
 // Discord
-app.get('/auth/discord', passport.authenticate('discord'));
-app.get('/auth/discord/callback', passport.authenticate('discord', {
+app.get('/auth/discord', passport.authenticate('discord', {session: false}));
+app.get('/auth/discord/callback', passport.authenticate('discord',
+    {session: false,
     failureRedirect: '/'
 }), (req, res) => {
     res.redirect('http://localhost:3000/dashboard') // Successful auth
 });
 
 //Twitch
-app.get("/auth/twitch", passport.authenticate('twitch'));
-app.get("/auth/twitch/callback", passport.authenticate('twitch', {
+app.get("/auth/twitch", passport.authenticate('twitch', {session: false}));
+app.get("/auth/twitch/callback", passport.authenticate('twitch', {session: false,
     failureRedirect: '/'
 }), (req, res) => {
     // Successful authentication, redirect home.
     res.redirect("http://localhost:3000/dashboard")
-});
-
-app.get("/auth/logout", (req, res) => {
-  req.logout();
-  res.send(req.user);
 });
 
 // Routes

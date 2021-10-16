@@ -2,18 +2,29 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
+import { setCurrentUser } from "../../actions/authActions";
+import classnames from "classnames";
+
 const isEmpty = require("is-empty");
 
+
 class Username extends Component {
-  
-/*
+  constructor() {
+    super();
+    this.state = {
+      email: "",
+      password: "",
+      errors: {}
+    };
+  }
+
   componentDidMount() {
     // If username exists, should redirect them to dashboard
-    if (!isEmpty(this.props.auth.name)) {
+    if (!isEmpty(this.props.auth.user.name)) {
       this.props.history.push("/dashboard");
     }
   }
-*/
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
       this.setState({
@@ -28,11 +39,13 @@ class Username extends Component {
 
   onSubmit = e => {
     e.preventDefault();
+
     const addUsername = {
       name: this.state.name,
     };
 
-    this.props.setCurrentUser(addUsername, this.props.history);
+    setCurrentUser(addUsername);
+
   };
 
   onLogoutClick = e => {
@@ -100,11 +113,13 @@ class Username extends Component {
 
 Username.propTypes = {
   logoutUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  errors: state.errors
 });
 
 export default connect(

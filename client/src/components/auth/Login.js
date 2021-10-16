@@ -23,11 +23,11 @@ class Login extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
+    if (this.props.auth.isAuthenticated) {
       this.props.history.push("/dashboard");
     }
-
-    if (nextProps.errors) {
+    
+     if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors
       });

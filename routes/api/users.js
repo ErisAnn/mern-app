@@ -3,7 +3,6 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
-const passport = require("passport");
 
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
@@ -109,7 +108,7 @@ router.post("/login", (req, res) => {
 });
 
 // @route POST api/users/addusername
-// @desc Login user and return JWT token
+// @desc Add username
 // @access Public
 router.post("/addusername", (req, res) => {
   // Form validation
@@ -124,33 +123,15 @@ router.post("/addusername", (req, res) => {
   const username = req.body.name.toLowerCase();
  
   // Find user by email
-  User.findOne({ name }).then(user => {
+  User.findOne({ username }).then(user => {
     // Check if user exists
     if (user) {
       return res.status(404).json({ usernamefound: "Username already exists" });
-    }
-
-
-
-        // Sign token
-        jwt.sign(
-          payload,
-          keys.secretOrKey,
-          {
-            expiresIn: 31556926 // 1 year in seconds
-          },
-          (err, token) => {
-            res.json({
-              success: true,
-              token: "Bearer " + token
-            });
-          }
-        );
-
-
+    } else {
+      return res.json(username);
+    };
   });
 });
-
 
 
 module.exports = router;

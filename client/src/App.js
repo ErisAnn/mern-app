@@ -13,6 +13,8 @@ import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
+import Username from "./components/dashboard/Username";
+import CookietoSession from "./components/dashboard/CookietoSession";
 
 import "./App.css";
 
@@ -45,9 +47,10 @@ class App extends Component {
             <Route exact path="/" component={Landing} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
+            <Route exact path="/cookietosession" component={CookietoSession} />
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
-              <PrivateRoute exact path="/addusername" component={Dashboard} />
+              <PrivateRoute exact path="/addusername" component={Username} />
             </Switch>
           </div>
         </Router>
